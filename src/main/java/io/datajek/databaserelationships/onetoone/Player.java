@@ -1,16 +1,21 @@
 package io.datajek.databaserelationships.onetoone;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id") //2nd solution to JSON Infinite Recursion
 public class Player {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int Id;
     private String name;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, optional = false) // optional = false) TELLS that association cannot be null, by default it is true which means it can be null.
     @JoinColumn(name = "profile_id", referencedColumnName = "id")
+//    @JsonManagedReference //1st solution to JSON Infinite Recursion
     private PlayerProfile playerProfile;
 
     public PlayerProfile getPlayerProfile() {
