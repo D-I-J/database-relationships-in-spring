@@ -1,5 +1,6 @@
 package io.datajek.databaserelationships.manytomany;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import org.hibernate.engine.internal.Cascade;
 
@@ -18,10 +19,19 @@ public class Tournament {
     @JoinTable(name = "tournament_categories",
             joinColumns = @JoinColumn(name = "tournament_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
+    @JsonIgnoreProperties("tournaments")
     private List<Category> playingCategories = new ArrayList<>();
 
     public void addCategory(Category category){
         playingCategories.add(category);
+        category.getTournaments().add(this);
+    }
+
+    public void removeCategory(Category category){
+        if (playingCategories != null){
+            playingCategories.remove(category);
+            category.getTournaments().remove(this);
+        }
     }
     public List<Category> getPlayingCategories() {
         return playingCategories;

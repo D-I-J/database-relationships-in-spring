@@ -1,6 +1,10 @@
 package io.datajek.databaserelationships.manytomany;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Category {
@@ -10,6 +14,10 @@ public class Category {
 
     @Column(unique = true)
     private String name;
+
+    @ManyToMany(mappedBy = "playingCategories", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("playingCategories")
+    private List<Tournament> tournaments = new ArrayList<>();
 
     public Category() {
     }
@@ -33,5 +41,13 @@ public class Category {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<Tournament> getTournaments() {
+        return tournaments;
+    }
+
+    public void setTournaments(List<Tournament> tournaments) {
+        this.tournaments = tournaments;
     }
 }
